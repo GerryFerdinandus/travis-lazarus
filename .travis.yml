@@ -2,7 +2,7 @@
 # License: MIT
 
 
-language: generic
+language: shell
 sudo: required
 dist: trusty
 
@@ -34,10 +34,8 @@ matrix:
     - os: linux
       env: LAZ_VER=1.8.2 LAZ_ENV=qemu-arm LAZ_OPT="--os=linux --cpu=arm"
     - os: windows
-      language: shell
       env: LAZ_VER=2.0.2 LAZ_REL=32 LAZ_OPT="--os=win32 --cpu=i386"
     - os: windows
-      language: shell
       env: LAZ_VER=2.0.2 LAZ_REL=64 LAZ_OPT="--os=win64 --cpu=x86_64"
     - os: linux
       arch: arm64
@@ -62,5 +60,5 @@ script:
 
 notifications:
   email:
-    on_success: false
+    on_success: never
     on_failure: change
