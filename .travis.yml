@@ -39,6 +39,10 @@ matrix:
     - os: windows
       language: shell
       env: LAZ_VER=2.0.2 LAZ_REL=64 LAZ_OPT="--os=win64 --cpu=x86_64"
+    - os: linux
+      arch: arm64
+      env: LAZ_PKG=true
+
 
 before_install:
 - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then choco install python3 --params "/InstallDir:C:\python3"; fi
