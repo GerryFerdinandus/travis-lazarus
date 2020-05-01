@@ -1,7 +1,7 @@
 Travis CI integration for FPC / Lazarus
 =======================================
 
-[![Build Status](https://travis-ci.org/nielsAD/travis-lazarus.svg?branch=master)](https://travis-ci.org/nielsAD/travis-lazarus)
+[![Build Status](https://travis-ci.org/GerryFerdinandus/travis-lazarus.svg?branch=master)](https://travis-ci.org/GerryFerdinandus/travis-lazarus)
 
 [Travis CI](https://travis-ci.org/) currently has no official support for [FreePascal](http://freepascal.org/). This repository demonstrates how FPC and [Lazarus](http://www.lazarus-ide.org/) projects can be used in combination with Travis. There is support for building with multiple Lazarus releases on Travis' `Linux`, `Mac OSX` and `Windows 10` platforms. Support for Windows (both `win32` and `win64`) can also be done using [Wine](https://www.winehq.org/).
 
