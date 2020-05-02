@@ -1,45 +1,48 @@
 # Part of `travis-lazarus` (https://github.com/nielsAD/travis-lazarus)
 # License: MIT
 
-
 language: shell
-dist: trusty
-
-os:
-  - linux
-  - osx
-  - windows
 
 env:
   global:
     - WINEPREFIX=~/.winelaz
     - DISPLAY=:99.0
-  jobs:
-    - LAZ_PKG=true  # Use the latest version from the default package manager. (apt, brew or choco)
-    - LAZ_VER=1.8.2 # Use specific (binary) release from SourceForce
+
+# LAZ_PKG=true  # Use the latest version from the default package manager. (apt, brew or choco)
+# LAZ_VER=2.0.8 # Use specific (binary) release from SourceForce. Not available for linux arm64
+
+# Windows
+# PKG=true use choco installer. This should be the latest version. Sometimes there is a download error.
+# optional select manualy via   env: LAZ_VER=2.0.8 LAZ_REL=64 LAZ_OPT="--os=win64 --cpu=x86_64"
+
+# Linux
+# bionic PKG = lazarus 1.8.2
+# for arm64 build  Make sure your gui project is lazarus 1.8.2 compatible
+#   not posible to select a newer version.
+
+# macOS
+# program must be 64bit build + cocoa. Use: LAZ_PKG=true LAZ_OPT="--widgetset=cocoa"
 
 jobs:
   include:
-    - os: linux
-      env: LAZ_VER=1.4.4  LAZ_ENV=wine WINEARCH=win32 LAZ_OPT="--os=win32 --cpu=i386"
-    - os: linux
-      env: LAZ_VER=1.8.2 LAZ_ENV=wine WINEARCH=win32 LAZ_OPT="--os=win32 --cpu=i386"
-    - os: linux
-      env: LAZ_VER=1.4.4  LAZ_ENV=wine WINEARCH=win64 LAZ_OPT="--os=win64 --cpu=x86_64"
-    - os: linux
-      env: LAZ_VER=1.8.2 LAZ_ENV=wine WINEARCH=win64 LAZ_OPT="--os=win64 --cpu=x86_64"
-    - os: linux
-      env: LAZ_VER=1.4.4  LAZ_ENV=qemu-arm LAZ_OPT="--os=linux --cpu=arm"
-    - os: linux
-      env: LAZ_VER=1.8.2 LAZ_ENV=qemu-arm LAZ_OPT="--os=linux --cpu=arm"
     - os: windows
-      env: LAZ_VER=2.0.2 LAZ_REL=32 LAZ_OPT="--os=win32 --cpu=i386"
+      env: LAZ_PKG=true
     - os: windows
-      env: LAZ_VER=2.0.2 LAZ_REL=64 LAZ_OPT="--os=win64 --cpu=x86_64"
+      env: LAZ_VER=2.0.8 LAZ_REL=64 LAZ_OPT="--os=win64 --cpu=x86_64"
+    - os: osx
+      osx_image: xcode11.4
+      env: LAZ_PKG=true LAZ_OPT="--widgetset=cocoa"
+    - os: linux
+      env: LAZ_VER=2.0.8
+      dist: bionic
     - os: linux
       arch: arm64
       env: LAZ_PKG=true
-
+      dist: bionic
+# Better to use real windows OS than using 'wine' to build and run unit test
+#    - os: linux
+#      env: LAZ_VER=2.0.8 LAZ_ENV=wine WINEARCH=win32 LAZ_OPT="--os=win32 --cpu=i386"
+#      dist: trusty
 
 before_install:
 - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then choco install python3 --params "/InstallDir:C:\python3"; fi
@@ -56,6 +59,7 @@ install:
 script:
   - lazbuild $LAZ_OPT my_lazarus_tests.lpi               # Build my_lazarus_test project
   - $LAZ_ENV ./bin/my_lazarus_tests --all --format=plain # Run my_lazarus_test testsuite
+  - lazbuild $LAZ_OPT gui_build_tests.lpi                # Build gui_build_tests project
 
 notifications:
   email:
