@@ -21,7 +21,7 @@ uses
 procedure TAwesomeTestCase.TestHookUp;
 begin
   AssertTrue('This shouldn''t fail...', True);
-  AssertTrue('GetTickCount', GetTickCount() >= 0);
+  AssertTrue('GetTickCount', GetTickCount() > 0);
   AssertEquals('RValue', $01, GetRValue($10FF01));
   AssertEquals('RValue', $FF, GetGValue($10FF01));
   AssertEquals('RValue', $10, GetBValue($10FF01));
