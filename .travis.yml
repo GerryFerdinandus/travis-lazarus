@@ -3,11 +3,6 @@
 
 language: shell
 
-env:
-  global:
-    - WINEPREFIX=~/.winelaz
-    - DISPLAY=:99.0
-
 # LAZ_PKG=true  # Use the latest version from the default package manager. (apt, brew or choco)
 # LAZ_VER=2.0.8 # Use specific (binary) release from SourceForce. Not available for linux arm64
 
@@ -16,29 +11,44 @@ env:
 # optional select manualy via   env: LAZ_VER=2.0.8 LAZ_REL=64 LAZ_OPT="--os=win64 --cpu=x86_64"
 
 # Linux
-# bionic PKG = lazarus 1.8.2
-# for arm64 build  Make sure your gui project is lazarus 1.8.2 compatible
-#   not posible to select a newer version.
+# arm64 build only have LAZ_PKG=true mode. Not posible to select lazarus version
+# bionic PKG => lazarus 1.8.2
 
 # macOS
 # program must be 64bit build + cocoa. Use: LAZ_PKG=true LAZ_OPT="--widgetset=cocoa"
 
 jobs:
   include:
-    - os: windows
+    - name: Windows with Lazarus 64-bit (PKG) compile a 64 bit program
+      os: windows
       env: LAZ_PKG=true
-    - os: windows
+    - name: Windows with Lazarus 64-bit (2.0.8) compile a 64 bit program
+      os: windows
       env: LAZ_VER=2.0.8 LAZ_REL=64 LAZ_OPT="--os=win64 --cpu=x86_64"
-    - os: osx
-      osx_image: xcode11.4
+    - name: Windows with Lazarus 64-bit (2.0.8) compile a 32 bit program
+      os: windows
+      env: LAZ_VER=2.0.8 LAZ_REL=64 LAZ_OPT="--os=win32 --cpu=i386"
+    - name: macOS 10.14 via homebrew (PKG)
+      os: osx
+      osx_image: xcode11.3
       env: LAZ_PKG=true LAZ_OPT="--widgetset=cocoa"
-    - os: linux
+    - name: Linux ubuntu 18.04 AMD64 (2.0.8)
+      os: linux
       env: LAZ_VER=2.0.8
       dist: bionic
-    - os: linux
+    - name: Linux ubuntu 20.04 AMD64 (2.0.8)
+      os: linux
+      env: LAZ_VER=2.0.8
+      dist: focal
+    - name: Linux ubuntu 18.04 AArch64 (PKG)
+      os: linux
       arch: arm64
       env: LAZ_PKG=true
       dist: bionic
+
+    # - name: Windows with Lazarus 32-bit (2.0.8) (not working)
+    #   os: windows
+    #   env: LAZ_VER=2.0.8 LAZ_REL=32 LAZ_OPT="--os=win32 --cpu=i386"
 # Better to use real windows OS than using 'wine' to build and run unit test
 #    - os: linux
 #      env: LAZ_VER=2.0.8 LAZ_ENV=wine WINEARCH=win32 LAZ_OPT="--os=win32 --cpu=i386"
@@ -47,19 +57,32 @@ jobs:
 before_install:
 - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then choco install python3 --params "/InstallDir:C:\python3"; fi
 - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then export PATH=/c/Python3:/c/Python3/Scripts:/c/lazarus:$PATH; fi
-- if [[ "$TRAVIS_OS_NAME" != "windows" ]]; then
-    Xvfb $DISPLAY &
-  fi
 
 install:
-  # Install prerequisites (fpc/lazarus/wine/qemu)
+# Install prerequisites (fpc/lazarus/wine/qemu)
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install xvfb -y; fi
+# Output something every 10 minutes or Travis kills the job
+- while sleep 60; do echo "===== 1 minute mark ====="; done &
 - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then python ./.travis.install.py; fi
 - if [[ "$TRAVIS_OS_NAME" != "windows" ]]; then ./.travis.install.py; fi
+# Killing background sleep loop
+- kill %1
 
 script:
-  - lazbuild $LAZ_OPT my_lazarus_tests.lpi               # Build my_lazarus_test project
-  - $LAZ_ENV ./bin/my_lazarus_tests --all --format=plain # Run my_lazarus_test testsuite
-  - lazbuild $LAZ_OPT gui_build_tests.lpi                # Build gui_build_tests project
+# Output something every 10 minutes or Travis kills the job
+- while sleep 60; do echo "===== 1 minute mark ====="; done &
+# Start software build + test run
+- lazbuild $LAZ_OPT my_lazarus_tests.lpi               # Build my_lazarus_test project
+- $LAZ_ENV ./bin/my_lazarus_tests --all --format=plain # Run my_lazarus_test testsuite
+- lazbuild $LAZ_OPT gui_build_tests.lpi                # Build gui_build_tests project
+# Linux GUI software need to be run via 'xvfb-run'
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then xvfb-run $LAZ_ENV ./bin/gui_build_tests --all --format=plain; fi
+# Windows GUI software can be run directly.
+- if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then $LAZ_ENV ./bin/gui_build_tests --all --format=plain; fi
+# There is no osx GUI version running yet. Need macOS app folder.
+
+# Killing background sleep loop
+- kill %1
 
 notifications:
   email:
