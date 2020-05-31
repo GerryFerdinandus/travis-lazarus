@@ -1,9 +1,14 @@
 Travis CI integration for FPC / Lazarus
 =======================================
 
+Warning
+-----
+This fork is being used for my personal project [bittorrent-tracker-editor](https://github.com/GerryFerdinandus/bittorrent-tracker-editor).
+
+
 [![Build Status](https://travis-ci.org/GerryFerdinandus/travis-lazarus.svg?branch=master)](https://travis-ci.org/GerryFerdinandus/travis-lazarus)
 
-[Travis CI](https://travis-ci.org/) currently has no official support for [FreePascal](http://freepascal.org/). This repository demonstrates how FPC and [Lazarus](http://www.lazarus-ide.org/) projects can be used in combination with Travis. There is support for building with multiple Lazarus releases on Travis' `Linux`, `Mac OSX` and `Windows 10` platforms. Support for Windows (both `win32` and `win64`) can also be done using [Wine](https://www.winehq.org/).
+[Travis CI](https://travis-ci.org/) currently has no official support for [FreePascal](http://freepascal.org/). This repository demonstrates how FPC and [Lazarus](http://www.lazarus-ide.org/) projects can be used in combination with Travis. There is support for building with multiple Lazarus releases on Travis' `Linux`, `Mac OSX` and `Windows 10` platforms.
 
 Files
 -----
@@ -13,20 +18,18 @@ Files
 
 `./my_lazarus_test*` Toy project demonstrating a possible test setup.
 
-How to use
+How to use (see .travis.yml of bittorrent-tracker-editor project)
 ----------
 - [Set up Travis CI for your repository](http://docs.travis-ci.com/user/for-beginners/)
 - Add `.travis.install.py` to your repository and run it in the `install` phase.
   - Execute the following command inside your repository:
 
     ```shell
-    git submodule add https://github.com/nielsAD/travis-lazarus.git travis-lazarus
+    git submodule add https://github.com/gerryferdinandus/travis-lazarus.git travis-lazarus
     ```
   - Add the following lines to your `.travis.yml` file:
 
     ```yaml
-    sudo: required
-    dist: trusty
     install: ./travis-lazarus/.travis.install.py
     ```
 - **[OPTIONAL]** Modify settings to customize build versions.
@@ -45,38 +48,27 @@ How to use
       - osx
       - windows
     ```
-  - Add Windows builds using Wine (_although a good indicator, success with Wine does not guarantee success with Windows, and vice versa!!_):
-
-    ```yaml
-    matrix:
-      include:
-        - os: linux
-          env: LAZ_VER=1.6.2 LAZ_ENV=wine WINEARCH=win32 LAZ_OPT="--os=win32 --cpu=i386"
-        - os: linux
-          env: LAZ_VER=1.6.2 LAZ_ENV=wine WINEARCH=win64 LAZ_OPT="--os=win64 --cpu=x86_64"
-    ```
   - Add Windows 10 server builds:
 
     ```yaml
-    matrix:
+    jobs:
       include:
         - os: windows
-          env: LAZ_VER=2.0.2 LAZ_REL=32 LAZ_OPT="--os=win32 --cpu=i386"
+          env: LAZ_PKG=true
         - os: windows
-          env: LAZ_VER=2.0.2 LAZ_REL=64 LAZ_OPT="--os=win64 --cpu=x86_64"
+          env: LAZ_VER=2.0.8 LAZ_REL=64 LAZ_OPT="--os=win32 --cpu=i386"
+        - os: windows
+          env: LAZ_VER=2.0.8 LAZ_REL=64 LAZ_OPT="--os=win64 --cpu=x86_64"
     ```
-  - Add a virtual display server if you cannot run your program headless:
-
+  - Use virtual display server 'xvfb-run' if you cannot run your GUI program headless (Linux only):
     ```yaml
-    env:
-      global:
-        - DISPLAY=:99.0
-    before_install: - Xvfb $DISPLAY &
+    script:
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then xvfb-run $LAZ_ENV ./bin/gui_build_tests --all --format=plain; fi
     ```
   - Other optional environment variables:
     - `LAZ_REL` release platform (use with `LAZ_VER`):
       - Linux: `i386` or `amd64`
-      - Mac OSX: `i386` or `powerpc`
-      - Wine: `32` or `64`
+      - ~~Mac OSX: `i386` or `powerpc`~~
+      - ~~Wine: `32` or `64`~~
       - Windows: `32` or `64`
     - `LAZ_TMP_DIR` temporary directory.
