@@ -5,10 +5,15 @@ unit gui_build_test;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls;
 
 type
+
+  { TForm1 }
+
   TForm1 = class(TForm)
+    Timer1: TTimer;
+    procedure Timer1Timer(Sender: TObject);
   private
 
   public
@@ -21,6 +26,14 @@ var
 implementation
 
 {$R *.lfm}
+
+{ TForm1 }
+
+procedure TForm1.Timer1Timer(Sender: TObject);
+begin
+  // After 3 seccond terminate the program
+  Application.Terminate;
+end;
 
 end.
 
