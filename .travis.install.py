@@ -10,13 +10,13 @@ OS_NAME=os.environ.get('TRAVIS_OS_NAME') or 'linux'
 OS_PMAN={'linux': 'sudo apt-get', 'osx': 'brew', 'windows':'choco'}[OS_NAME]
 
 LAZ_TMP_DIR=os.environ.get('LAZ_TMP_DIR') or 'lazarus_tmp'
-LAZ_REL_DEF=os.environ.get('LAZ_REL_DEF') or {'linux':'amd64', 'qemu-arm':'amd64', 'qemu-arm-static':'amd64', 'osx':'i386', 'wine':'32', 'windows':'64'}
+LAZ_REL_DEF=os.environ.get('LAZ_REL_DEF') or {'linux':'amd64', 'qemu-arm':'amd64', 'qemu-arm-static':'amd64', 'osx':'x86-64', 'wine':'32', 'windows':'64'}
 LAZ_BIN_SRC=os.environ.get('LAZ_BIN_SRC') or 'https://sourceforge.net/projects/lazarus/files/%(target)s/Lazarus%%20%(version)s/'
 LAZ_BIN_TGT=os.environ.get('LAZ_BIN_TGT') or {
     'linux':           'Lazarus%%20Linux%%20%(release)s%%20DEB',
     'qemu-arm':        'Lazarus%%20Linux%%20%(release)s%%20DEB',
     'qemu-arm-static': 'Lazarus%%20Linux%%20%(release)s%%20DEB',
-    'osx':             'Lazarus%%20Mac%%20OS%%20X%%20%(release)s',
+    'osx':             'Lazarus%%20macOS%%20%(release)s',
     'wine':            'Lazarus%%20Windows%%20%(release)s%%20bits',
     'windows':         'Lazarus%%20Windows%%20%(release)s%%20bits'
 }
@@ -45,8 +45,10 @@ def install_osx_dmg(dmg):
 
 def install_lazarus_default():
     if OS_NAME == 'linux':
+        # update the apt database
+        os.system('sudo apt-get update -y')
         # Make sure nogui is installed for headless runs
-        pkg = 'lazarus lcl-nogui -y'
+        pkg = 'xvfb fpc fpc-source lazarus lcl-nogui -y'
     elif OS_NAME == 'osx':
         # cask is already present in brew
         pkg = 'fpc && %s cask install fpcsrc lazarus' % (OS_PMAN)
@@ -103,7 +105,7 @@ def install_lazarus_version(ver,rel,env):
         process_file = lambda f: (not f.endswith('.deb')) or os.system('sudo dpkg --force-overwrite -i %s' % (f)) == 0
     elif osn == 'linux':
         # Install dependencies
-        if os.system('%s install libgtk2.0-dev' % (OS_PMAN)) != 0:
+        if os.system('%s install -y xvfb libgtk2.0-dev' % (OS_PMAN)) != 0:
             return False
 
         # Install all .deb files
