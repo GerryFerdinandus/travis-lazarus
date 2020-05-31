@@ -15,7 +15,9 @@ language: shell
 # bionic PKG => lazarus 1.8.2
 
 # macOS
-# program must be 64bit build + cocoa. Use: LAZ_PKG=true LAZ_OPT="--widgetset=cocoa"
+# Program must NOW be 64bit build + cocoa. Use: LAZ_OPT="--widgetset=cocoa"
+# Must use LAZ_VER=2.0.8 or higher OR LAZ_PKG=true
+# osx_image: xcode11.3 , Higher version does not work yet.
 
 jobs:
   include:
@@ -28,14 +30,38 @@ jobs:
     - name: Windows with Lazarus 64-bit (2.0.8) compile a 32 bit program
       os: windows
       env: LAZ_VER=2.0.8 LAZ_REL=64 LAZ_OPT="--os=win32 --cpu=i386"
-    - name: macOS 10.14 via homebrew (PKG)
+    - name: macOS 10.14 via homebrew (PKG) compile a 64 bit program
       os: osx
       osx_image: xcode11.3
       env: LAZ_PKG=true LAZ_OPT="--widgetset=cocoa"
+    # - name: macOS 10.14 with Lazarus 64-bit (2.0.8) (Does not work.)
+    #   os: osx
+    #   osx_image: xcode11.3
+    #   env: LAZ_VER=2.0.8 LAZ_OPT="--widgetset=cocoa"
+    # - name: Linux ubuntu 16.04 AMD64 (PKG) (Does not work.)
+    #   os: linux
+    #   env: LAZ_PKG=true
+    #   dist: xenial
+    - name: Linux ubuntu 16.04 AMD64 (1.8.2)
+      os: linux
+      env: LAZ_VER=1.8.2
+      dist: xenial
+    - name: Linux ubuntu 16.04 AMD64 (2.0.8)
+      os: linux
+      env: LAZ_VER=2.0.8
+      dist: xenial
+    - name: Linux ubuntu 18.04 AMD64 (PKG)
+      os: linux
+      env: LAZ_PKG=true
+      dist: bionic
     - name: Linux ubuntu 18.04 AMD64 (2.0.8)
       os: linux
       env: LAZ_VER=2.0.8
       dist: bionic
+    - name: Linux ubuntu 20.04 AMD64 (PKG)
+      os: linux
+      env: LAZ_PKG=true
+      dist: focal
     - name: Linux ubuntu 20.04 AMD64 (2.0.8)
       os: linux
       env: LAZ_VER=2.0.8
@@ -45,10 +71,15 @@ jobs:
       arch: arm64
       env: LAZ_PKG=true
       dist: bionic
-
+    - name: Linux ubuntu 20.04 AArch64 (PKG)
+      os: linux
+      arch: arm64
+      env: LAZ_PKG=true
+      dist: focal
     # - name: Windows with Lazarus 32-bit (2.0.8) (not working)
     #   os: windows
     #   env: LAZ_VER=2.0.8 LAZ_REL=32 LAZ_OPT="--os=win32 --cpu=i386"
+
 # Better to use real windows OS than using 'wine' to build and run unit test
 #    - os: linux
 #      env: LAZ_VER=2.0.8 LAZ_ENV=wine WINEARCH=win32 LAZ_OPT="--os=win32 --cpu=i386"
@@ -59,10 +90,9 @@ before_install:
 - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then export PATH=/c/Python3:/c/Python3/Scripts:/c/lazarus:$PATH; fi
 
 install:
-# Install prerequisites (fpc/lazarus/wine/qemu)
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install xvfb -y; fi
 # Output something every 10 minutes or Travis kills the job
 - while sleep 60; do echo "===== 1 minute mark ====="; done &
+# Install prerequisites (fpc/lazarus/wine/qemu)
 - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then python ./.travis.install.py; fi
 - if [[ "$TRAVIS_OS_NAME" != "windows" ]]; then ./.travis.install.py; fi
 # Killing background sleep loop
