@@ -52,6 +52,12 @@ def install_lazarus_default():
     elif OS_NAME == 'osx':
         # cask is already present in brew
         pkg = 'fpc && %s cask install fpcsrc lazarus' % (OS_PMAN)
+    elif OS_NAME == 'windows':
+        # chocolatey have 32 and 64 bit selection
+        if os.environ.get('LAZ_REL') == '32':
+            pkg = 'lazarus --forcex86'
+        else:
+            pkg = 'lazarus'
     else:
         # Default to lazarus
         pkg = 'lazarus'
