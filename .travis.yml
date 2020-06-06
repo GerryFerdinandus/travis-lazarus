@@ -17,7 +17,7 @@ language: shell
 # macOS
 # Program must NOW be 64bit build + cocoa. Use: LAZ_OPT="--widgetset=cocoa"
 # Must use LAZ_VER=2.0.8 or higher OR LAZ_PKG=true
-# osx_image: xcode11.3 , Higher version does not work yet.
+# osx_image: xcode11.3+
 
 jobs:
   include:
@@ -36,11 +36,19 @@ jobs:
     - name: macOS 10.14 via homebrew (PKG) compile a 64 bit program
       os: osx
       osx_image: xcode11.3
-      env: LAZ_PKG=true LAZ_OPT="--widgetset=cocoa"
-    # - name: macOS 10.14 with Lazarus 64-bit (2.0.8) (Does not work.)
-    #   os: osx
-    #   osx_image: xcode11.3
-    #   env: LAZ_VER=2.0.8 LAZ_OPT="--widgetset=cocoa"
+      env: LAZ_PKG=true LAZ_OPT="--widgetset=cocoa --cpu=x86_64"
+    - name: macOS 10.14 with Lazarus 64-bit (2.0.8)
+      os: osx
+      osx_image: xcode11.3
+      env: LAZ_VER=2.0.8 LAZ_OPT="--widgetset=cocoa --cpu=x86_64"
+    - name: macOS 10.15 via homebrew (PKG) compile a 64 bit program
+      os: osx
+      osx_image: xcode11.5
+      env: LAZ_PKG=true LAZ_OPT="--widgetset=cocoa --cpu=x86_64"
+    - name: macOS 10.15 with Lazarus 64-bit (2.0.8)
+      os: osx
+      osx_image: xcode11.5
+      env: LAZ_VER=2.0.8 LAZ_OPT="--widgetset=cocoa --cpu=x86_64"
     # - name: Linux ubuntu 16.04 AMD64 (PKG) (Does not work.)
     #   os: linux
     #   env: LAZ_PKG=true
@@ -82,6 +90,9 @@ jobs:
     # - name: Windows with Lazarus 32-bit (2.0.8) (not working)
     #   os: windows
     #   env: LAZ_VER=2.0.8 LAZ_REL=32 LAZ_OPT="--os=win32 --cpu=i386"
+    # - name: Freebsd AMD64 (Does not work.)
+    #   os: freebsd
+    #   env: LAZ_PKG=true
 
 # Better to use real windows OS than using 'wine' to build and run unit test
 #    - os: linux
