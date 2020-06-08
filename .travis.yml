@@ -49,10 +49,6 @@ jobs:
       os: osx
       osx_image: xcode11.5
       env: LAZ_VER=2.0.8 LAZ_OPT="--widgetset=cocoa --cpu=x86_64"
-    # - name: Linux ubuntu 16.04 AMD64 (PKG) (Does not work.)
-    #   os: linux
-    #   env: LAZ_PKG=true
-    #   dist: xenial
     - name: Linux ubuntu 16.04 AMD64 (1.8.2)
       os: linux
       env: LAZ_VER=1.8.2
@@ -87,12 +83,50 @@ jobs:
       arch: arm64
       env: LAZ_PKG=true
       dist: focal
+
+
+    # - name: Freebsd AMD64 (Does not work.)
+    #   os: freebsd
+    #   arch: i386
+    #   env: LAZ_PKG=true
+    # - name: Linux test arm64-graviton2 (not yet available)
+    #   os: linux
+    #   arch: arm64-graviton2
+    #   env: LAZ_PKG=true
+    #   dist: bionic
+    # - name: Linux test i386 (not yet available)
+    #   os: linux
+    #   arch: i386
+    #   env: LAZ_PKG=true
+    #   dist: bionic
+    # - name: Linux test arm64-graviton2 (not yet available)
+    #   os: linux
+    #   arch: arm64-graviton2
+    #   env: LAZ_PKG=true
+    #   dist: focal
+    # - name: Linux test i386 (not yet available)
+    #   os: linux
+    #   arch: i386
+    #   env: LAZ_PKG=true
+    #   dist: focal
+    # - name: Linux test arm64-graviton2 (Does not work.)
+    #   os: linux
+    #   arch: arm64-graviton2
+    #   env: LAZ_PKG=true
+    # - name: Linux test i386 (Does not work.)
+    #   os: linux
+    #   arch: i386
+    #   env: LAZ_PKG=true
     # - name: Windows with Lazarus 32-bit (2.0.8) (not working)
     #   os: windows
     #   env: LAZ_VER=2.0.8 LAZ_REL=32 LAZ_OPT="--os=win32 --cpu=i386"
     # - name: Freebsd AMD64 (Does not work.)
     #   os: freebsd
     #   env: LAZ_PKG=true
+    # - name: Linux ubuntu 16.04 AMD64 (PKG) (Does not work.)
+    #   os: linux
+    #   env: LAZ_PKG=true
+    #   dist: xenial
 
 # Better to use real windows OS than using 'wine' to build and run unit test
 #    - os: linux

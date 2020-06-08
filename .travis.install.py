@@ -39,7 +39,7 @@ def install_lazarus_default():
             pkg = 'lazarus'
     elif OS_NAME == 'freebsd':
         # Installs a package without asking any questions '-y'
-        pkg = '-y editors/lazarus lang/fpc-source'
+        pkg = '-y fpc lang/fpc-source editors/lazarus'
     else:
         # Default to lazarus
         pkg = 'lazarus'
