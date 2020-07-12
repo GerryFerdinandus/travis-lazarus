@@ -53,25 +53,25 @@ jobs:
       os: linux
       env: LAZ_VER=1.8.2
       dist: xenial
-    - name: Linux ubuntu 16.04 AMD64 (2.0.8)
+    - name: Linux ubuntu 16.04 AMD64 (2.0.10)
       os: linux
-      env: LAZ_VER=2.0.8
+      env: LAZ_VER=2.0.10
       dist: xenial
     - name: Linux ubuntu 18.04 AMD64 (PKG = 1.8.2)
       os: linux
       env: LAZ_PKG=true
       dist: bionic
-    - name: Linux ubuntu 18.04 AMD64 (2.0.8)
+    - name: Linux ubuntu 18.04 AMD64 (2.0.10)
       os: linux
-      env: LAZ_VER=2.0.8
+      env: LAZ_VER=2.0.10
       dist: bionic
     - name: Linux ubuntu 20.04 AMD64 (PKG = 2.0.6)
       os: linux
       env: LAZ_PKG=true
       dist: focal
-    - name: Linux ubuntu 20.04 AMD64 (2.0.8)
+    - name: Linux ubuntu 20.04 AMD64 (2.0.10)
       os: linux
-      env: LAZ_VER=2.0.8
+      env: LAZ_VER=2.0.10
       dist: focal
     - name: Linux ubuntu 18.04 AArch64 (PKG = 1.8.2)
       os: linux
